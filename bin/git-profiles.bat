@@ -16,8 +16,9 @@ goto :eof
 
 :list
     >nul dir "%GIT_PROFILES_PATH%\*" && set ANY_GIT_PROFILES_EXIST=true
-    if "%ANY_GIT_PROFILES_EXIST" == "true" (
+    if "%ANY_GIT_PROFILES_EXIST%" == "true" (
         for %%f in (%GIT_PROFILES_PATH%\*) do echo %%~nf
+        goto :eof
     ) else (
         echo ^No git profiles found in %GIT_PROFILES_PATH%
         goto :fail
@@ -39,11 +40,18 @@ goto :eof
         call :list
         goto :fail
     )
-    git config --remove-section user
+    set GIT_SSH_DIR=%USERPROFILE%\.ssh
+    set GIT_PROFILE_SSH_DIR=%GIT_SSH_DIR%\%2
+    if not exist "%GIT_PROFILE_SSH_DIR%" (
+        echo ^Expected to find folder containing SSH key for this profile:!\n!%GIT_PROFILE_SSH_DIR%
+        goto :fail
+    )
     for /F "tokens=*" %%l in (%GIT_PROFILE_FILE%) do (
         echo git config %%l
         git config %%l
     )
+    echo xcopy "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
+    xcopy /y "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
     goto :eof
 
 :new
@@ -85,7 +93,7 @@ goto :eof
 
 :verify_any_profiles_or_list
     >nul dir "%GIT_PROFILES_PATH%\*" && set ANY_GIT_PROFILES_EXIST=true
-    if "%ANY_GIT_PROFILES_EXIST" == "true" (
+    if "%ANY_GIT_PROFILES_EXIST%" == "true" (
         goto :list
     ) else (
         set MSGBOX_TITLE=Create new git profile?
