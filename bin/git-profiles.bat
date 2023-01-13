@@ -7,6 +7,8 @@ setlocal EnableDelayedExpansion
 
 set GIT_PROFILES_PATH=%USERPROFILE%\.gitprofiles
 
+if not exist "%GIT_PROFILES_PATH%" mkdir "%GIT_PROFILES_PATH%"
+
 if "%1" == "" goto :verify_any_profiles_or_list
 if "%1" == "list" goto :list
 if "%1" == "new" goto :new
@@ -15,8 +17,8 @@ if "%1" == "use" goto :use
 goto :eof
 
 :list
-    >nul dir "%GIT_PROFILES_PATH%\*" && set ANY_GIT_PROFILES_EXIST=true
-    if "%ANY_GIT_PROFILES_EXIST%" == "true" (
+    for /f %%a in ('dir /A-D /B %GIT_PROFILES_PATH% 2^>nul') do set ANY_GIT_PROFILES_EXIST=true
+    if "!ANY_GIT_PROFILES_EXIST!" == "true" (
         for %%f in (%GIT_PROFILES_PATH%\*) do echo %%~nf
         goto :eof
     ) else (
@@ -91,8 +93,8 @@ goto :eof
     goto :eof
 
 :verify_any_profiles_or_list
-    >nul dir "%GIT_PROFILES_PATH%\*" && set ANY_GIT_PROFILES_EXIST=true
-    if "%ANY_GIT_PROFILES_EXIST%" == "true" (
+    for /f %%a in ('dir /A-D /B %GIT_PROFILES_PATH% 2^>nul') do set ANY_GIT_PROFILES_EXIST=true
+    if "!ANY_GIT_PROFILES_EXIST!" == "true" (
         goto :list
     ) else (
         set MSGBOX_TITLE=Create new git profile?
