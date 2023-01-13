@@ -100,10 +100,6 @@ goto :eof
     )
     goto :eof
 
-::
-:: User Interfaces
-::
-
 :msgbox_ok
     powershell -c "Add-Type -Assembly System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show(\"${env:MSGBOX_TEXT}\", \"${env:MSGBOX_TITLE}\")"
     goto :eof
@@ -122,10 +118,6 @@ goto :eof
         powershell -c "Add-Type -AssemblyName Microsoft.VisualBasic; [Microsoft.VisualBasic.Interaction]::InputBox(\"${env:MSGBOX_TEXT}\", \"${env:MSGBOX_TITLE}\", \"${env:MSGBOX_VALUE}\")"
     `) do set MSGBOX_RESULT=%%i
     goto :eof
-
-::
-:: Exit GOTOs
-::
 
 :exit
     exit /b 0
