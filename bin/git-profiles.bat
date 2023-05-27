@@ -44,16 +44,14 @@ goto :eof
     )
     set GIT_SSH_DIR=%USERPROFILE%\.ssh
     set GIT_PROFILE_SSH_DIR=%GIT_SSH_DIR%\%2
-    if not exist "%GIT_PROFILE_SSH_DIR%" (
-        echo ^Expected to find folder containing SSH key for this profile:!\n!%GIT_PROFILE_SSH_DIR%
-        goto :fail
-    )
     for /F "tokens=*" %%l in (%GIT_PROFILE_FILE%) do (
         echo git config %%l
         git config %%l
     )
-    echo xcopy "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
-    xcopy /y "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
+    if exist "%GIT_PROFILE_SSH_DIR%" (
+        echo xcopy "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
+        xcopy /y "%GIT_PROFILE_SSH_DIR%\*" "%GIT_SSH_DIR%\"
+    )
     goto :eof
 
 :new
